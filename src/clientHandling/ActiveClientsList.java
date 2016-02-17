@@ -1,10 +1,11 @@
 package clientHandling;
 
+import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import com.VerboseDebug;
-
+import logic.Command;
+import logic.CommandHandler;
 import clientHandling.Client;
 
 public class ActiveClientsList {
@@ -12,30 +13,31 @@ public class ActiveClientsList {
 	private static volatile ArrayList<Client> activeClients = new ArrayList<Client>();
 	private static volatile ArrayList<ClientInput> pendingCommands = new ArrayList<ClientInput>();
 	private static volatile ArrayList<ClientOutput> outputToClients = new ArrayList<ClientOutput>();
+	private static volatile ArrayList<Integer> queuedRemovals = new ArrayList<Integer>();
+	private static volatile ArrayList<Socket> queuedClients = new ArrayList<Socket>();
 
 	public static boolean addClient(Socket socket){
 		Client cli = new Client(socket, generateUniqueClientID());
-		cli.init();
-		activeClients.add(cli);
+		if (cli.init()){
+			activeClients.add(cli);
+		}
 		return true;
 	}
 	
-	public static boolean removeClient(int id){
-		for (int i = 0; i < activeClients.size(); i++){
-			if (activeClients.get(i).getUniqueID() == id){
-				
-				//TODO: when a client is removed clean up all pending commands
-				activeClients.get(i).isDisconnecting();
-				removeDisconnectedIO(activeClients.get(i).getUniqueID());
-				activeClients.remove(i);
-				return true;
-			}
-		}
-		
-		return false;
+	public static boolean queueClientAddition(Socket socket){
+		queuedClients.add(socket);
+		return true;
 	}
 	
-	
+	private static boolean addQueuedClients(){
+		while (!queuedClients.isEmpty()){
+			addClient(queuedClients.get(0));
+			queuedClients.remove(0);
+		}
+		
+		return true;
+	}
+
 	private static int generateUniqueClientID(){
 		int id = 0;
 		
@@ -52,17 +54,24 @@ public class ActiveClientsList {
 	
 	public static boolean addPendingCommand(ClientInput cmd){
 		pendingCommands.add(cmd);
-		VerboseDebug.verboseDebugMessage("Client cmd added");
 		return true;
 	}
 	
 	public static boolean activateClients(){
+		removeQueued();
+		
 		if (!activeClients.isEmpty()){
 			for (int i = 0; i < activeClients.size(); i++){
-				activeClients.get(i).addOutput("test");
-				activeClients.get(i).active();
+				try {
+					activeClients.get(i).active();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
+		
+		addQueuedClients();
+		
 		return true;
 	}
 	
@@ -80,10 +89,41 @@ public class ActiveClientsList {
 	}
 	
 	public static boolean runPlayerCommands(){
-		//TODO: this block
-		return false;
+		while (!pendingCommands.isEmpty()){
+			CommandHandler.addCommand(new Command(pendingCommands.get(0)));
+			pendingCommands.remove(0);
+		}
+		return true;
 	}
 	
+	public static boolean queueRemoval(int id){
+		queuedRemovals.add(id);
+		return true;
+	}
+	
+	
+	public static boolean removeQueued(){
+		while (!queuedRemovals.isEmpty()){
+			removeClient(queuedRemovals.get(0));
+			queuedRemovals.remove(0);
+		}
+		
+		return true;
+	}
+	
+	public static boolean removeClient(int id){
+		for (int i = 0; i < activeClients.size(); i++){
+			if (activeClients.get(i).getUniqueID() == id){
+				activeClients.get(i).isDisconnecting();
+				removeDisconnectedIO(activeClients.get(i).getUniqueID());
+				activeClients.remove(i);
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
 	public static boolean removeDisconnectedIO(int uID){
 		boolean isCleaned = false;
 		int start = 0;

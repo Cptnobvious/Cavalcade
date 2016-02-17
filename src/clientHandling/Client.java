@@ -29,26 +29,34 @@ public class Client extends Thread {
 		this.uID = ID;
 	}
 	
-	public void init(){
+	public boolean init(){
 		
-		try {
-			System.out.println("Client connected from: " + cSocket.getInetAddress() + " is now ID " + uID);
+		if (cSocket != null){
+		
+			try {
+				System.out.println("Client connected from: " + cSocket.getInetAddress() + " is now ID " + uID);
+				
+				
+				in = new BufferedReader(new InputStreamReader(cSocket.getInputStream()));
+				this.inputWatcher = new ClientInputWatcher(in);
+				inputWatcher.start();
+				out = new PrintWriter(cSocket.getOutputStream(), true);
+				
+				active();
+				
+			} catch (IOException e){
+				e.printStackTrace();
+			} 
+		
+			return true;
 			
-			
-			in = new BufferedReader(new InputStreamReader(cSocket.getInputStream()));
-			this.inputWatcher = new ClientInputWatcher(in);
-			inputWatcher.start();
-			out = new PrintWriter(cSocket.getOutputStream(), true);
-			
-			active();
-			
-		} catch (IOException e){
-			e.printStackTrace();
-		} 
+		}
+		
+		return false;
 		
 	}
 	
-	public void active(){
+	public void active() throws IOException{
 		
 		String input = null;
 		
@@ -65,13 +73,13 @@ public class Client extends Thread {
 				
 			showOutput();
 		} else {
-			ActiveClientsList.removeClient(uID);
+			ActiveClientsList.queueRemoval(uID);
 		}
 		
 		
 	}
 	
-	public void showOutput(){
+	public void showOutput() throws IOException{
 		while (!toOutput.isEmpty()){
 			out.println(toOutput.get(0));
 			toOutput.remove(0);

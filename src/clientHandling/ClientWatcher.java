@@ -26,8 +26,7 @@ public class ClientWatcher extends Thread {
 				System.out.println("Server is now listening for connections");
 				
 				while(true){
-					ActiveClientsList.addClient(incomingConnectionListener.accept());
-					//new Client(incomingConnectionListener.accept()).start();
+					ActiveClientsList.queueClientAddition(incomingConnectionListener.accept());
 				}
 				
 			} catch (IOException e) {
