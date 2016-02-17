@@ -37,7 +37,7 @@ public class Client extends Thread {
 				System.out.println("Client connected from: " + cSocket.getInetAddress() + " is now ID " + uID);
 				
 				
-				in = new BufferedReader(new InputStreamReader(cSocket.getInputStream()));
+				in = new BufferedReader(new InputStreamReader(cSocket.getInputStream()), 1024);
 				this.inputWatcher = new ClientInputWatcher(in);
 				inputWatcher.start();
 				out = new PrintWriter(cSocket.getOutputStream(), true);
@@ -62,7 +62,7 @@ public class Client extends Thread {
 		
 		
 		if (!out.checkError()){
-				
+			
 			if (inputWatcher.hasCommand()){
 				//TODO: better way of handling "queue"
 				input = inputWatcher.getEscalatedCommand();

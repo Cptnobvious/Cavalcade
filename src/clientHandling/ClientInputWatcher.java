@@ -24,6 +24,13 @@ public class ClientInputWatcher extends Thread{
 				input = in.readLine();
 				if (input != null){
 					escalateCommand(input);
+					System.out.println("Non null input");
+				}
+				
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 			}
 			
