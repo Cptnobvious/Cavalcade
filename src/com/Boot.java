@@ -1,8 +1,6 @@
 package com;
 
-import java.util.ArrayList;
-
-import utility.fileIO.FileUtility;
+import logic.CommandHandler;
 import clientHandling.ActiveClientsList;
 import clientHandling.ClientWatcher;
 
@@ -21,7 +19,7 @@ public class Boot {
 		
 		while (!isCloseRequested){
 			ActiveClientsList.activateClients();
-			ActiveClientsList.runPlayerCommands();
+			CommandHandler.processCommands();
 			try {
 				Thread.sleep(50);
 			} catch (InterruptedException e) {

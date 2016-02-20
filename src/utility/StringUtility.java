@@ -10,4 +10,13 @@ public class StringUtility {
 		String[] arr = str.split(" ");
 		return arr[i-1];
 	}
+	
+	public static String getStringAfterFirst(String str){
+		String[] arr = str.split(" ");
+		String result = null;
+		for (int i = 1; i < arr.length; i ++){
+			if (i == 1){result = arr[1];} else {result = result + arr[i];}
+		}
+		return result;
+	}
 }

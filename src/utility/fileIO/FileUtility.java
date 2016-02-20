@@ -45,20 +45,36 @@ public class FileUtility {
 		return str;
 	}
 	
-	public static boolean saveFile(String loc, ArrayList<String> str){
-		return saveFile(loc, str, false, true);
+	public static boolean fileExists(String loc){
+		File file = new File(loc);
+		if (file.exists()){
+			return true;
+		}
+		return false;
 	}
 	
-	public static boolean saveFile(String loc, ArrayList<String> str, boolean create, boolean overwrite){
+	public static boolean saveFile(String loc, String fileName, ArrayList<String> str){
+		return saveFile(loc, fileName, str, false, true);
+	}
+	
+	public static boolean saveFile(String loc, String fileName, ArrayList<String> str, boolean create, boolean overwrite){
+		
+		String path = loc + fileName;
+		
 		try {
 			
 			File file = new File(loc);
+			System.out.println("IO at: " + file.getPath());
 			
 			if (create && !file.exists()){
+				file.mkdir();
+				file = new File(loc + fileName);
 				file.createNewFile();
+			} else if (!create && !file.exists()){
+				return false;
 			}
 			
-			PrintWriter out = new PrintWriter(new FileOutputStream(loc, !overwrite));
+			PrintWriter out = new PrintWriter(new FileOutputStream(path, !overwrite));
 			
 			for (int i = 0; i < str.size(); i++){
 				out.println(str.get(i));
@@ -68,11 +84,11 @@ public class FileUtility {
 			out.close();
 			
 		} catch (FileNotFoundException e){
-			System.out.println("File does not exist: " + loc);
+			System.out.println("File does not exist: " + path);
 			e.printStackTrace();
 			return false;
 		} catch (IOException e) {
-			System.out.println("Could not save file:" + loc);
+			System.out.println("Could not save file:" + path);
 			e.printStackTrace();
 			return false;
 		}	

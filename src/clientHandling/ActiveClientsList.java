@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import logic.Command;
 import logic.CommandHandler;
+import logic.TempLoginScreen;
 import clientHandling.Client;
 
 public class ActiveClientsList {
@@ -16,10 +17,12 @@ public class ActiveClientsList {
 	private static volatile ArrayList<Integer> queuedRemovals = new ArrayList<Integer>();
 	private static volatile ArrayList<Socket> queuedClients = new ArrayList<Socket>();
 
-	public static boolean addClient(Socket socket){
+	private static boolean addClient(Socket socket){
 		Client cli = new Client(socket, generateUniqueClientID());
 		if (cli.init()){
 			activeClients.add(cli);
+			//TODO: better system than this for login screen. Tie to event system
+			TempLoginScreen.showScreen(cli.getUniqueID());
 		}
 		return true;
 	}
@@ -60,6 +63,9 @@ public class ActiveClientsList {
 	public static boolean activateClients(){
 		removeQueued();
 		
+		sendOutput();
+		runPlayerCommands();
+		
 		if (!activeClients.isEmpty()){
 			for (int i = 0; i < activeClients.size(); i++){
 				try {
@@ -75,7 +81,14 @@ public class ActiveClientsList {
 		return true;
 	}
 	
-	public static boolean sendOutput(int id, String str){
+	
+	public static boolean addOutputToClient(int id, String str){
+		ClientOutput out = new ClientOutput(id, str);
+		outputToClients.add(out);
+		return true;
+	}
+	
+	private static boolean sendOutput(){
 		while (!outputToClients.isEmpty()){
 			for(int i = 0; i < activeClients.size(); i ++){
 				if (outputToClients.get(0).getID() == activeClients.get(i).getUniqueID()){
@@ -111,7 +124,7 @@ public class ActiveClientsList {
 		return true;
 	}
 	
-	public static boolean removeClient(int id){
+	private static boolean removeClient(int id){
 		for (int i = 0; i < activeClients.size(); i++){
 			if (activeClients.get(i).getUniqueID() == id){
 				activeClients.get(i).isDisconnecting();
@@ -136,7 +149,7 @@ public class ActiveClientsList {
 				if (pendingCommands.get(i).getID() == uID){
 					isCleaned = false;
 					pendingCommands.remove(i);
-					start = i - 1;
+					start = i;// - 1;
 					break;
 				}
 			}
@@ -153,7 +166,7 @@ public class ActiveClientsList {
 				if (outputToClients.get(i).getID() == uID){
 					isCleaned = false;
 					outputToClients.remove(i);
-					start = i - 1;
+					start = i;// - 1;
 					break;
 				}
 			}
