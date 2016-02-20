@@ -67,7 +67,7 @@ public class FileUtility {
 			System.out.println("IO at: " + file.getPath());
 			
 			if (create && !file.exists()){
-				file.mkdir();
+				file.mkdirs();
 				file = new File(loc + fileName);
 				file.createNewFile();
 			} else if (!create && !file.exists()){
