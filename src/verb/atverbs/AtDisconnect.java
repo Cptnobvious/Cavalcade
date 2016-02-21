@@ -1,5 +1,6 @@
-package verb;
+package verb.atverbs;
 
+import verb._Verb;
 import clientHandling.ActiveClientsList;
 import logic.CommandHandler;
 

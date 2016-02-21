@@ -4,8 +4,10 @@ import java.util.ArrayList;
 
 import player.Account;
 import utility.StringUtility;
-import verb.AtDisconnect;
 import verb._Verb;
+import verb.atverbs.AtConnect;
+import verb.atverbs.AtCreate;
+import verb.atverbs.AtDisconnect;
 import clientHandling.ActiveClientsList;
 
 //This handles incoming text from clients and uses it to make something happen
@@ -26,29 +28,21 @@ public class CommandHandler {
 			String first = StringUtility.getFirstWord(cmd);
 			int id = commands.get(0).getID();
 			
+			boolean found = false;
+			
 			for(int i = 0; i < globalVerbs.size(); i++){
 				if (globalVerbs.get(i).checkSynonyms(first)){
 					globalVerbs.get(i).run(id, cmd);
-					return true;
+					commands.remove(0);
+					found = true;
+					break;
 				}
 			}
 			
-			if (first.equals("@CREATE")){
-				Account acc = new Account();
-				String result = acc.generateAccount(StringUtility.getStringAfterFirst(cmd));
-				ActiveClientsList.addOutputToClient(id, result);
-				//ActiveClientsList.queueRemoval(id);
-			} else if (first.equals("@CONNECT")){
-				Account acc = new Account();
-				boolean valid = acc.init(StringUtility.getWordInString(cmd, 2), StringUtility.getWordInString(cmd, 3));
-				if (valid != true){
-					ActiveClientsList.addOutputToClient(id, "Incorrect name or password");
-				} else {
-					ActiveClientsList.addOutputToClient(id, "Account loaded");
-				}
+			if (!found){
+				ActiveClientsList.addOutputToClient(id, "Command not understood");
+				commands.remove(0);
 			}
-			
-			commands.remove(0);
 		}
 		return true;
 	}
@@ -56,6 +50,10 @@ public class CommandHandler {
 	public static boolean initGlobalVerbs(){
 		AtDisconnect atDisconnect = new AtDisconnect();
 		atDisconnect.init();
+		AtCreate atCreate = new AtCreate();
+		atCreate.init();
+		AtConnect atConnect = new AtConnect();
+		atConnect.init();
 		return true;
 	}
 	

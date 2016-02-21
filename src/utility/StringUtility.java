@@ -8,7 +8,11 @@ public class StringUtility {
 	
 	public static String getWordInString(String str, int i){
 		String[] arr = str.split(" ");
-		return arr[i-1];
+		if (arr.length >= i){
+			return arr[i-1];
+		} else {
+			return null;
+		}
 	}
 	
 	public static String getStringAfterFirst(String str){
