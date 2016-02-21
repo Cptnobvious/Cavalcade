@@ -11,8 +11,8 @@ import java.util.ArrayList;
 
 public class FileUtility {
 	
-	public static String loadFile(String loc){
-		String str = "0";
+	public static ArrayList<String> loadFile(String loc){
+		ArrayList<String> loadedFile = new ArrayList<String>();
 		
 		File file = new File(loc);
 		if (!file.exists()) {return null;}
@@ -20,16 +20,12 @@ public class FileUtility {
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(loc));
 			
-			String line = in.readLine();
-			str = line;
+			String inputLine = in.readLine();
 			
-			while (true){
-				line = in.readLine();
-				if (line == null){
-					break;
-				}
-				str = str + line;
-			} 
+			while (inputLine != null){
+				loadedFile.add(inputLine);
+				inputLine = in.readLine();
+			}
 
 			
 			in.close();
@@ -42,7 +38,7 @@ public class FileUtility {
 		} 
 		
 		
-		return str;
+		return loadedFile;
 	}
 	
 	public static boolean fileExists(String loc){

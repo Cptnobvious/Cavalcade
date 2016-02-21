@@ -30,6 +30,14 @@ public class CommandHandler {
 				String result = acc.generateAccount(StringUtility.getStringAfterFirst(cmd));
 				ActiveClientsList.addOutputToClient(id, result);
 				//ActiveClientsList.queueRemoval(id);
+			} else if (first.equals("@CONNECT")){
+				Account acc = new Account();
+				boolean valid = acc.init(StringUtility.getWordInString(cmd, 2), StringUtility.getWordInString(cmd, 3));
+				if (valid != true){
+					ActiveClientsList.addOutputToClient(id, "Incorrect name or password");
+				} else {
+					ActiveClientsList.addOutputToClient(id, "Account loaded");
+				}
 			}
 			
 			commands.remove(0);
