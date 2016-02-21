@@ -17,6 +17,8 @@ public class Boot {
 		clientWatcher = new ClientWatcher(PORT);
 		clientWatcher.start();
 		
+		CommandHandler.initGlobalVerbs();
+		
 		while (!isCloseRequested){
 			ActiveClientsList.activateClients();
 			CommandHandler.processCommands();

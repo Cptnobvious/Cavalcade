@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import player.Account;
 import utility.StringUtility;
+import verb.AtDisconnect;
+import verb._Verb;
 import clientHandling.ActiveClientsList;
 
 //This handles incoming text from clients and uses it to make something happen
@@ -11,6 +13,7 @@ import clientHandling.ActiveClientsList;
 public class CommandHandler {
 
 	private static ArrayList<Command> commands = new ArrayList<Command>();
+	private static ArrayList<_Verb> globalVerbs = new ArrayList<_Verb>();
 	
 	public static boolean addCommand(Command cmd){
 		commands.add(cmd);
@@ -23,9 +26,14 @@ public class CommandHandler {
 			String first = StringUtility.getFirstWord(cmd);
 			int id = commands.get(0).getID();
 			
-			if (first.equals("@DISCONNECT")){
-				ActiveClientsList.queueRemoval(id);
-			} else if (first.equals("@CREATE")){
+			for(int i = 0; i < globalVerbs.size(); i++){
+				if (globalVerbs.get(i).checkSynonyms(first)){
+					globalVerbs.get(i).run(id, cmd);
+					return true;
+				}
+			}
+			
+			if (first.equals("@CREATE")){
 				Account acc = new Account();
 				String result = acc.generateAccount(StringUtility.getStringAfterFirst(cmd));
 				ActiveClientsList.addOutputToClient(id, result);
@@ -45,4 +53,14 @@ public class CommandHandler {
 		return true;
 	}
 	
+	public static boolean initGlobalVerbs(){
+		AtDisconnect atDisconnect = new AtDisconnect();
+		atDisconnect.init();
+		return true;
+	}
+	
+	public static boolean registerGlobalVerb(_Verb verb){
+		globalVerbs.add(verb);
+		return true;
+	}
 }
