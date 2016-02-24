@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import logic.Command;
 import logic.CommandHandler;
+import logic.PlayerList;
 import logic.TempLoginScreen;
 import clientHandling.Client;
 
@@ -128,6 +129,7 @@ public class ActiveClientsList {
 		for (int i = 0; i < activeClients.size(); i++){
 			if (activeClients.get(i).getUniqueID() == id){
 				activeClients.get(i).isDisconnecting();
+				PlayerList.removeConnectedAccount(id);
 				removeDisconnectedIO(activeClients.get(i).getUniqueID());
 				activeClients.remove(i);
 				return true;

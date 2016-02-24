@@ -23,7 +23,7 @@ public class AtCreate extends _Verb{
 	public boolean run(int id, String cmd) {
 		String str = StringUtility.getWordInString(cmd, 2);
 		
-		if (str.length() < 32){
+		if (str.length() < 32 && str  != null){
 			Account acc = new Account();
 			String result = acc.generateAccount(StringUtility.getWordInString(cmd, 2));
 			ActiveClientsList.addOutputToClient(id, result);

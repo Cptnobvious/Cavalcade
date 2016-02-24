@@ -8,6 +8,7 @@ import verb._Verb;
 import verb.atverbs.AtConnect;
 import verb.atverbs.AtCreate;
 import verb.atverbs.AtDisconnect;
+import verb.exclamverbs.ExclamNewCharacter;
 import clientHandling.ActiveClientsList;
 
 //This handles incoming text from clients and uses it to make something happen
@@ -54,6 +55,9 @@ public class CommandHandler {
 		atCreate.init();
 		AtConnect atConnect = new AtConnect();
 		atConnect.init();
+		
+		ExclamNewCharacter exnewchar = new ExclamNewCharacter();
+		exnewchar.init();
 		return true;
 	}
 	

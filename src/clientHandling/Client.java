@@ -13,6 +13,8 @@ import java.util.ArrayList;
 
 public class Client extends Thread {
 
+	private static final int INPUTBUFFERSIZE = 2048;
+	
 	private Socket cSocket;
 	private BufferedReader in;
 	private PrintWriter out;
@@ -37,7 +39,7 @@ public class Client extends Thread {
 				System.out.println("Client connected from: " + cSocket.getInetAddress() + " is now ID " + uID);
 				
 				
-				in = new BufferedReader(new InputStreamReader(cSocket.getInputStream()), 1024);
+				in = new BufferedReader(new InputStreamReader(cSocket.getInputStream()), Client.INPUTBUFFERSIZE);
 				this.inputWatcher = new ClientInputWatcher(in);
 				inputWatcher.start();
 				out = new PrintWriter(cSocket.getOutputStream(), true);
