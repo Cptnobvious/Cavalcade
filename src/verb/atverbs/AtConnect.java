@@ -35,7 +35,7 @@ public class AtConnect extends _Verb{
 			ActiveClientsList.addOutputToClient(id, "Account loaded");
 			ActiveClientsList.addOutputToClient(id, "--------------------");
 			ActiveClientsList.addOutputToClient(id, "!NEWCHARACTER <name>");
-			acc.showCharacterList(id);
+			acc.showCharacterList();
 		}
 	
 		return false;

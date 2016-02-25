@@ -8,7 +8,10 @@ import verb._Verb;
 import verb.atverbs.AtConnect;
 import verb.atverbs.AtCreate;
 import verb.atverbs.AtDisconnect;
+import verb.exclamverbs.ExclamDeleteCharacter;
+import verb.exclamverbs.ExclamLoadCharacter;
 import verb.exclamverbs.ExclamNewCharacter;
+import verb.exclamverbs.ExclamShowCharacters;
 import clientHandling.ActiveClientsList;
 
 //This handles incoming text from clients and uses it to make something happen
@@ -58,6 +61,12 @@ public class CommandHandler {
 		
 		ExclamNewCharacter exnewchar = new ExclamNewCharacter();
 		exnewchar.init();
+		ExclamDeleteCharacter exdeletechar = new ExclamDeleteCharacter();
+		exdeletechar.init();
+		ExclamShowCharacters exshowchars = new ExclamShowCharacters();
+		exshowchars.init();
+		ExclamLoadCharacter exloadchar = new ExclamLoadCharacter();
+		exloadchar.init();
 		return true;
 	}
 	

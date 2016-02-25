@@ -22,6 +22,7 @@ public class Account {
 	private int linkedClientID;
 	
 	private ArrayList<Actor> actors = new ArrayList<Actor>();
+	private int activeCharacter = -1;
 	
 	public Account(){
 		//Does nothing;
@@ -134,11 +135,22 @@ public class Account {
 		return linkedClientID;
 	}
 	
-	public boolean showCharacterList(int id){
+	public boolean showCharacterList(){
 		for (int i = 0; i < actors.size(); i++){
-			ActiveClientsList.addOutputToClient(id, i + ": " + actors.get(i).getName());
+			ActiveClientsList.addOutputToClient(linkedClientID, i + ": " + actors.get(i).getName());
 		}
 		return true;
+	}
+	
+	public boolean deleteCharacter(String name){
+		for (int i = 0; i < actors.size(); i++){
+			if (actors.get(i).getName().contains(name)){
+				ActiveClientsList.addOutputToClient(linkedClientID, actors.get(i).getName() + " deleted!");
+				actors.remove(i);
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public boolean newCharacter(String name){
@@ -146,6 +158,29 @@ public class Account {
 		act.newCharacter(this.name, name);
 		actors.add(act);
 		return true;
+	}
+	
+	public boolean setActiveCharacter(int index){
+		if (index > actors.size()){
+			return false;
+		}
+		
+		activeCharacter = index;
+		ActiveClientsList.addOutputToClient(linkedClientID, actors.get(index).getName() + " loaded!");
+		return true;
+	}
+	
+	public boolean setActiveCharacter(String name){
+		for (int i = 0; i < actors.size(); i++){
+			if (actors.get(i).getName().contains(name)){
+				return setActiveCharacter(i);
+			}
+		}
+		return false;
+	}
+	
+	public Actor getActiveCharacter(){
+		return actors.get(activeCharacter);
 	}
 	
 }
